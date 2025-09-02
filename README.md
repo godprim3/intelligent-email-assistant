@@ -7,6 +7,17 @@ A complete **React Native mobile application** with enterprise Spring Boot backe
 
 ## 🚀 Features
 
+### Quickstart (Mobile)
+- cd mobile
+- npm install
+- npx expo start
+
+Or run directly:
+- iOS Simulator: npx expo start --ios
+- Android Emulator: npx expo start --android
+
+For details see mobile/REDUX_TYPESCRIPT_SETUP.md
+
 ### **📱 Mobile-First Experience (React Native + Expo + Redux + TypeScript)**
 - **Cross-Platform Mobile App**: Single codebase for iOS and Android with native performance
 - **Enterprise TypeScript**: Full TypeScript implementation with strict type safety and IntelliSense
@@ -36,13 +47,14 @@ A complete **React Native mobile application** with enterprise Spring Boot backe
 
 ## 🏗️ Architecture
 
-### **📱 Mobile App (React Native + Expo) - Primary Interface**
+### **📱 Mobile App (React Native + Expo + Redux + TypeScript) - Primary Interface**
 - **Framework**: React Native with Expo for rapid development and cross-platform deployment
 - **Navigation**: React Navigation 6 with bottom tab and stack navigation patterns
-- **State Management**: React Context API with hooks for global state management
+- **State Management**: Redux Toolkit (RTK) with async thunks and typed hooks
 - **Local Storage**: AsyncStorage for offline data persistence and secure token storage
-- **API Integration**: Axios-based HTTP client with comprehensive error handling and mock fallbacks
+- **API Integration**: Typed ApiService with fetch, error handling, and mock fallbacks
 - **Notifications**: Expo Notifications for push notifications and background updates
+- **Testing**: Jest + ts-jest with unit tests for slices and services
 - **Platform Support**: iOS and Android with platform-specific optimizations
 
 ### **⚙️ Backend (Spring Boot) - Enterprise Java**
@@ -289,9 +301,17 @@ The system automatically:
 # Backend tests
 mvn test
 
-# Frontend tests
+# Web dashboard tests
 cd frontend
 npm test
+
+# Mobile app tests (Jest + TypeScript)
+cd mobile
+npm test
+
+# TypeScript check (mobile)
+cd mobile
+npx tsc --noEmit
 ```
 
 ### Code Structure
@@ -360,7 +380,7 @@ For issues and questions:
 - [ ] Support for additional LLM providers
 - [ ] Advanced email filtering and rules
 - [ ] Integration with other messaging platforms
-- [ ] Mobile app
+- [x] Mobile app (Expo React Native, Redux Toolkit, TypeScript, Jest)
 - [ ] Advanced analytics and reporting
 - [ ] Multi-user support
 - [ ] Kubernetes deployment configurations

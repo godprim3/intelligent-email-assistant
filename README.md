@@ -1,32 +1,61 @@
 # Intelligent Email Assistant
+**📱 Mobile-First AI-Powered Email Management System**
 
-An AI-powered email management system that analyzes Microsoft 365 emails using LLM providers (OpenAI/DeepSeek), automatically responds to routine emails, and sends WhatsApp notifications for emails requiring personal attention.
+A complete **React Native mobile application** with enterprise Spring Boot backend that intelligently analyzes Microsoft 365 emails using AI (DeepSeek/OpenAI), automatically responds to routine emails, and sends WhatsApp notifications when personal attention is needed.
+
+> **Mobile Engineering Focus**: This project demonstrates enterprise-grade mobile development with React Native, secure API integration, offline support, and real-time notifications - perfect for financial/crypto applications requiring robust mobile security.
 
 ## 🚀 Features
 
-- **AI Email Analysis**: Uses OpenAI GPT or DeepSeek to analyze email content and determine if personal attention is required
-- **Automated Responses**: Generates and sends contextually appropriate responses for routine emails
-- **WhatsApp Notifications**: Sends alerts via WhatsApp when emails need your personal attention
-- **Microsoft 365 Integration**: Seamlessly connects with your Outlook inbox via Microsoft Graph API
-- **Multi-LLM Support**: Supports both OpenAI and DeepSeek with fallback mechanisms
-- **User Preferences**: Customizable settings for response style, keywords, trusted senders, etc.
-- **React Frontend**: Modern web interface for monitoring and configuration
-- **Supabase Backend**: PostgreSQL database with real-time capabilities
+### **📱 Mobile-First Experience (React Native + Expo)**
+- **Cross-Platform Mobile App**: Single codebase for iOS and Android with native performance
+- **Advanced Navigation**: React Navigation 6 with bottom tabs and stack navigation
+- **Real-Time Dashboard**: Live email statistics, processing status, and analytics
+- **Email Management**: Browse, search, filter, and manage processed emails on mobile
+- **Smart Notifications**: Push notifications for urgent emails with customizable settings
+- **Offline Support**: AsyncStorage for local data with seamless sync when online
+- **Secure Authentication**: OAuth2 integration with Microsoft 365 and secure token management
+- **Modern UI/UX**: Custom component library with Expo Vector Icons and smooth animations
+
+### **🤖 Enterprise AI Integration**
+- **Multi-AI Support**: DeepSeek (primary) + OpenAI (fallback) for intelligent email analysis
+- **Smart Categorization**: AI determines if emails require personal attention
+- **Auto-Response Generation**: Contextually appropriate responses for routine emails
+- **Learning Capabilities**: Adapts to user preferences and email patterns
+- **Fallback Mechanisms**: Robust error handling with mock data for development
+
+### **🔗 Enterprise Backend & Integrations**
+- **Spring Boot REST API**: Java 17+ backend with microservices architecture
+- **Microsoft 365**: Full Outlook integration via Microsoft Graph API
+- **WhatsApp Business**: Priority alerts via Twilio WhatsApp Business API
+- **Database**: PostgreSQL (production) + H2 (development/testing)
+- **Security**: OAuth2, JWT tokens, encrypted API communications
 
 ## 🏗️ Architecture
 
-### Backend (Spring Boot)
-- **Email Processing**: Scheduled tasks to check inbox and process new emails
-- **LLM Integration**: Abstract layer supporting multiple AI providers
-- **Microsoft Graph API**: OAuth2-based email access and management
-- **WhatsApp Integration**: Twilio-based WhatsApp messaging
-- **Database**: JPA/Hibernate with PostgreSQL (Supabase)
+### **📱 Mobile App (React Native + Expo) - Primary Interface**
+- **Framework**: React Native with Expo for rapid development and cross-platform deployment
+- **Navigation**: React Navigation 6 with bottom tab and stack navigation patterns
+- **State Management**: React Context API with hooks for global state management
+- **Local Storage**: AsyncStorage for offline data persistence and secure token storage
+- **API Integration**: Axios-based HTTP client with comprehensive error handling and mock fallbacks
+- **Notifications**: Expo Notifications for push notifications and background updates
+- **Platform Support**: iOS and Android with platform-specific optimizations
 
-### Frontend (React + TypeScript)
-- **Dashboard**: Real-time statistics and email processing overview
-- **Email Management**: View, filter, and manage processed emails
-- **Settings**: Configure AI behavior, notifications, and preferences
-- **Material-UI**: Modern, responsive interface
+### **⚙️ Backend (Spring Boot) - Enterprise Java**
+- **Framework**: Spring Boot 3.x with Java 17+ for modern enterprise development
+- **Architecture**: RESTful microservices with clear separation of concerns
+- **AI Integration**: Abstract service layer supporting multiple AI providers (DeepSeek/OpenAI)
+- **Microsoft Graph API**: OAuth2-based integration for secure email access
+- **Database**: JPA/Hibernate with PostgreSQL (production) and H2 (testing)
+- **Security**: OAuth2 authentication, JWT tokens, secure API endpoints
+- **External Services**: Twilio WhatsApp integration, multiple AI provider support
+
+### **🌐 Web Dashboard (React TypeScript) - Admin Interface**
+- **Purpose**: Comprehensive administration and detailed analytics
+- **Technology**: React 18+ with TypeScript for type-safe development
+- **UI Framework**: Material-UI components with responsive design
+- **Real-time Updates**: Live dashboard with email processing statistics
 
 ## 📋 Prerequisites
 
@@ -174,7 +203,27 @@ mvn spring-boot:run -Dspring-boot.run.profiles=local
 
 The backend will start on `http://localhost:8080`
 
-### 3. Frontend Setup
+### 3. Mobile App Setup (React Native + Expo) - Primary Platform
+
+```bash
+cd mobile
+
+# Install dependencies
+npm install
+
+# Install Expo CLI globally if not already installed
+npm install -g @expo/cli
+
+# Start the development server
+npx expo start
+```
+
+**Running on Device/Simulator:**
+- **Physical Device**: Install Expo Go app and scan the QR code
+- **iOS Simulator**: Press `i` in the terminal after running `npx expo start`
+- **Android Emulator**: Press `a` in the terminal after running `npx expo start`
+
+### 4. Web Dashboard Setup (React TypeScript) - Admin Interface
 
 ```bash
 cd frontend
@@ -186,7 +235,7 @@ npm install
 npm start
 ```
 
-The frontend will start on `http://localhost:3000`
+The web dashboard will start on `http://localhost:3000`
 
 ### 4. Database Setup
 

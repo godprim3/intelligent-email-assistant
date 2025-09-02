@@ -1,6 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type {
+  DashboardStats,
+  EmailResponse,
+  Email,
+  Notification,
+  UserSettings,
+  ProcessingResult,
+  ApiError,
+  ApiResponse
+} from '../types';
 
 class ApiService {
+  private baseURL: string;
+
   constructor() {
     // Default to localhost for development
     // In production, this should be configured through environment variables
@@ -9,10 +21,10 @@ class ApiService {
       : 'https://your-production-api.com';
   }
 
-  async request(endpoint, options = {}) {
+  async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     
-    const defaultOptions = {
+    const defaultOptions: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,
@@ -23,23 +35,36 @@ class ApiService {
       const response = await fetch(url, { ...defaultOptions, ...options });
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        const apiError: ApiError = {
+          message: errorData.message || `HTTP error! status: ${response.status}`,
+          status: response.status,
+        };
+        throw apiError;
       }
       
       const data = await response.json();
-      return data;
-    } catch (error) {
+      return data as T;
+    } catch (error: any) {
       console.error(`API request failed for ${endpoint}:`, error);
-      throw error;
+      if (error.status) {
+        throw error; // Re-throw ApiError
+      }
+      // Convert generic errors to ApiError format
+      const apiError: ApiError = {
+        message: error.message || 'Network request failed',
+        status: 0,
+      };
+      throw apiError;
     }
   }
 
   // Dashboard APIs
-  async getDashboardStats() {
+  async getDashboardStats(): Promise<DashboardStats> {
     try {
-      const stats = await this.request('/api/dashboard/stats');
+      const stats = await this.request<DashboardStats>('/api/dashboard/stats');
       return stats;
-    } catch (error) {
+    } catch (error: any) {
       console.log('Using mock dashboard stats due to API error:', error.message);
       // Return mock data as fallback
       return {
@@ -51,13 +76,13 @@ class ApiService {
     }
   }
 
-  async triggerEmailProcessing() {
+  async triggerEmailProcessing(): Promise<ProcessingResult> {
     try {
-      const result = await this.request('/api/emails/process', {
+      const result = await this.request<ProcessingResult>('/api/emails/process', {
         method: 'POST',
       });
       return result;
-    } catch (error) {
+    } catch (error: any) {
       console.log('Using mock processing result due to API error:', error.message);
       return {
         success: true,
@@ -68,11 +93,11 @@ class ApiService {
   }
 
   // Email APIs
-  async getEmails(page = 0, size = 20) {
+  async getEmails(page = 0, size = 20): Promise<EmailResponse> {
     try {
-      const emails = await this.request(`/api/emails?page=${page}&size=${size}`);
+      const emails = await this.request<EmailResponse>(`/api/emails?page=${page}&size=${size}`);
       return emails;
-    } catch (error) {
+    } catch (error: any) {
       console.log('Using mock emails due to API error:', error.message);
       // Return mock data as fallback
       return {
@@ -119,11 +144,11 @@ class ApiService {
     }
   }
 
-  async getEmailById(emailId) {
+  async getEmailById(emailId: string): Promise<Email> {
     try {
-      const email = await this.request(`/api/emails/${emailId}`);
+      const email = await this.request<Email>(`/api/emails/${emailId}`);
       return email;
-    } catch (error) {
+    } catch (error: any) {
       console.log(`Using mock email data for ID ${emailId} due to API error:`, error.message);
       return {
         id: emailId,
@@ -141,11 +166,11 @@ class ApiService {
   }
 
   // Notifications APIs
-  async getNotifications() {
+  async getNotifications(): Promise<Notification[]> {
     try {
-      const notifications = await this.request('/api/notifications');
+      const notifications = await this.request<Notification[]>('/api/notifications');
       return notifications;
-    } catch (error) {
+    } catch (error: any) {
       console.log('Using mock notifications due to API error:', error.message);
       return [
         {
@@ -168,24 +193,24 @@ class ApiService {
     }
   }
 
-  async markNotificationAsRead(notificationId) {
+  async markNotificationAsRead(notificationId: string): Promise<ApiResponse<void>> {
     try {
-      const result = await this.request(`/api/notifications/${notificationId}/read`, {
+      const result = await this.request<ApiResponse<void>>(`/api/notifications/${notificationId}/read`, {
         method: 'PUT',
       });
       return result;
-    } catch (error) {
+    } catch (error: any) {
       console.log('Mock notification marked as read due to API error:', error.message);
       return { success: true };
     }
   }
 
   // Settings APIs
-  async getUserSettings() {
+  async getUserSettings(): Promise<UserSettings> {
     try {
-      const settings = await this.request('/api/user/settings');
+      const settings = await this.request<UserSettings>('/api/user/settings');
       return settings;
-    } catch (error) {
+    } catch (error: any) {
       console.log('Using mock user settings due to API error:', error.message);
       return {
         pushNotifications: true,
@@ -197,53 +222,53 @@ class ApiService {
     }
   }
 
-  async updateUserSettings(settings) {
+  async updateUserSettings(settings: Partial<UserSettings>): Promise<ApiResponse<UserSettings>> {
     try {
-      const result = await this.request('/api/user/settings', {
+      const result = await this.request<ApiResponse<UserSettings>>('/api/user/settings', {
         method: 'PUT',
         body: JSON.stringify(settings),
       });
       return result;
-    } catch (error) {
+    } catch (error: any) {
       console.log('Mock settings update due to API error:', error.message);
-      return { success: true, settings };
+      return { success: true, data: settings as UserSettings };
     }
   }
 
   // Health check
-  async checkHealth() {
+  async checkHealth(): Promise<{ status: string; error?: string }> {
     try {
-      const health = await this.request('/actuator/health');
+      const health = await this.request<{ status: string }>('/actuator/health');
       return health;
-    } catch (error) {
+    } catch (error: any) {
       console.log('API health check failed:', error.message);
       return { status: 'DOWN', error: error.message };
     }
   }
 
   // Utility methods
-  async storeAuthToken(token) {
+  async storeAuthToken(token: string): Promise<void> {
     try {
       await AsyncStorage.setItem('auth_token', token);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to store auth token:', error);
     }
   }
 
-  async getAuthToken() {
+  async getAuthToken(): Promise<string | null> {
     try {
       const token = await AsyncStorage.getItem('auth_token');
       return token;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to retrieve auth token:', error);
       return null;
     }
   }
 
-  async removeAuthToken() {
+  async removeAuthToken(): Promise<void> {
     try {
       await AsyncStorage.removeItem('auth_token');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to remove auth token:', error);
     }
   }

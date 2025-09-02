@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,45 +9,46 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import ApiService from '../services/ApiService';
+import { useAppSelector, useAppDispatch } from '../hooks/redux';
+import { fetchDashboardStats, triggerProcessing, clearError } from '../store/slices/dashboardSlice';
+import type { ScreenProps } from '../types';
 
-export default function DashboardScreen() {
-  const [stats, setStats] = useState({
-    totalEmails: 0,
-    processedToday: 0,
-    needsAttention: 0,
-    autoResponded: 0,
-  });
-  const [loading, setLoading] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState(null);
+export default function DashboardScreen({ navigation }: ScreenProps): React.ReactElement {
+  const dispatch = useAppDispatch();
+  const {
+    stats,
+    loading,
+    error,
+    processingInProgress,
+    lastProcessingResult
+  } = useAppSelector((state) => state.dashboard);
 
-  const loadStats = async () => {
-    setLoading(true);
-    try {
-      const response = await ApiService.getEmailStats();
-      setStats(response.data);
-      setLastUpdate(new Date().toLocaleTimeString());
-    } catch (error) {
-      Alert.alert('Error', 'Failed to load email statistics');
-      console.error('Error loading stats:', error);
-    } finally {
-      setLoading(false);
-    }
+  const loadStats = () => {
+    dispatch(fetchDashboardStats());
   };
 
-  const triggerEmailProcessing = async () => {
+  const handleTriggerProcessing = async () => {
     try {
-      await ApiService.triggerEmailProcessing();
-      Alert.alert('Success', 'Email processing triggered successfully');
-      loadStats(); // Refresh stats
-    } catch (error) {
-      Alert.alert('Error', 'Failed to trigger email processing');
+      const result = await dispatch(triggerProcessing()).unwrap();
+      Alert.alert(
+        'Success', 
+        result.message || 'Email processing triggered successfully'
+      );
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to trigger email processing');
     }
   };
 
   useEffect(() => {
     loadStats();
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('Error', error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
 
   return (
     <ScrollView
@@ -59,8 +60,8 @@ export default function DashboardScreen() {
       <View style={styles.header}>
         <Text style={styles.welcomeText}>Welcome to your</Text>
         <Text style={styles.titleText}>Email Assistant</Text>
-        {lastUpdate && (
-          <Text style={styles.updateText}>Last updated: {lastUpdate}</Text>
+        {processingInProgress && (
+          <Text style={styles.updateText}>Processing emails...</Text>
         )}
       </View>
 
@@ -80,25 +81,28 @@ export default function DashboardScreen() {
 
           <View style={[styles.statCard, styles.warningCard]}>
             <Ionicons name="alert-circle" size={32} color="#FF9800" />
-            <Text style={styles.statNumber}>{stats.needsAttention}</Text>
-            <Text style={styles.statLabel}>Needs Attention</Text>
+            <Text style={styles.statNumber}>{stats.urgentEmails}</Text>
+            <Text style={styles.statLabel}>Urgent Emails</Text>
           </View>
 
-          <View style={[styles.statCard, styles.infoCard]}>
+          <View style={[styles.statCard, styles.statInfoCard]}>
             <Ionicons name="send" size={32} color="#9C27B0" />
-            <Text style={styles.statNumber}>{stats.autoResponded}</Text>
-            <Text style={styles.statLabel}>Auto-Responded</Text>
+            <Text style={styles.statNumber}>{stats.autoResponses}</Text>
+            <Text style={styles.statLabel}>Auto-Responses</Text>
           </View>
         </View>
       </View>
 
       <View style={styles.actionsContainer}>
         <TouchableOpacity
-          style={styles.actionButton}
-          onPress={triggerEmailProcessing}
+          style={[styles.actionButton, processingInProgress && styles.disabledButton]}
+          onPress={handleTriggerProcessing}
+          disabled={processingInProgress}
         >
           <Ionicons name="refresh" size={24} color="white" />
-          <Text style={styles.actionButtonText}>Process Emails</Text>
+          <Text style={styles.actionButtonText}>
+            {processingInProgress ? 'Processing...' : 'Process Emails'}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -196,7 +200,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#FF9800',
     borderTopWidth: 4,
   },
-  infoCard: {
+  statInfoCard: {
     borderTopColor: '#9C27B0',
     borderTopWidth: 4,
   },
@@ -217,6 +221,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 3,
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
+    shadowOpacity: 0,
+    elevation: 0,
   },
   actionButtonText: {
     color: 'white',

